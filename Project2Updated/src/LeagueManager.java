@@ -11,7 +11,7 @@ public class LeagueManager {
   //public static Player[] players;
 
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
     //players = Players.load();
     //System.out.printf("There are currently %d registered players.%n", players.length);
     mainMenu = new MainMenu();
