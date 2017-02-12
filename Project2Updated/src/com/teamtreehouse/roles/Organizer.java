@@ -45,10 +45,6 @@ public class Organizer {
                 printTeamHeightReport();
             } else if (userChoice.toLowerCase().equals("balance")) { // league balance report
                 printLeagueBalanceReport();
-            } else if (userChoice.toLowerCase().equals("exit")) { // exit
-                return;
-            } else {
-                System.out.println("That was not a menu choice.  Please try again.");
             }
         } while (! userChoice.toLowerCase().equals("exit"));
     }

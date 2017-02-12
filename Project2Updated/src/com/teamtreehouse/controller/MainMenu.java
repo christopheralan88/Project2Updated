@@ -43,9 +43,7 @@ public class MainMenu {
                 Organizer organizer = new Organizer();
                 organizer.run();
             } else if (userChoice.toLowerCase().equals("coach")) {
-                System.out.println("Enter the name of the coach who's roster you want to display");
-                String coachName = reader.readLine();
-                printTeamRoster(coachName);
+                printTeamRoster();
             }
         } while (! userChoice.toLowerCase().equals("exit"));
         System.exit(0);
