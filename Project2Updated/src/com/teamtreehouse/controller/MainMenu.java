@@ -22,12 +22,6 @@ public class MainMenu {
     private Map<String, String> choices;
 
 
-    private enum RoleMenu{
-        ORGANIZER,
-        COACH,
-        EXIT
-    }
-
     public MainMenu() {
         players = Arrays.asList(Players.load()); // load players array and convert to List.
         Collections.sort(players); // sort players - default way to sort will be Player's compareTo method.
@@ -55,26 +49,6 @@ public class MainMenu {
             }
         } while (! userChoice.toLowerCase().equals("exit"));
         System.exit(0);
-
-        /*String userChoice = scanner.next();
-        while (! userChoice.toLowerCase().equals("exit")) {
-            if (userChoice.toLowerCase().equals("organizer")) {
-                Organizer organizer = new Organizer();
-                organizer.run();
-                printRoles(); //after above method is exited, display MainMenu roles to user for them to choose.
-                userChoice = scanner.next();
-            } else if (userChoice.toLowerCase().equals("coach")) {
-                System.out.println("What coach's roster do you want to display?");
-                String coachName = scanner.next();
-                printTeamRoster(coachName);
-                printRoles(); //after above method is exited, display MainMenu roles to user for them to choose.
-                userChoice = scanner.next();
-            } else {
-                System.out.println("That was not a menu choice.  Please try again.");
-                userChoice = scanner.next();
-            }
-        }
-        System.exit(0);*/
     }
 
     public void printRoles() {

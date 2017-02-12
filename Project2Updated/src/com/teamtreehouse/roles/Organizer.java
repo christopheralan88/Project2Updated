@@ -1,7 +1,6 @@
 package com.teamtreehouse.roles;
 
 
-import com.sun.org.apache.bcel.internal.classfile.SourceFile;
 import com.teamtreehouse.controller.MainMenu;
 import com.teamtreehouse.model.Player;
 import com.teamtreehouse.model.Players;
@@ -28,7 +27,7 @@ public class Organizer {
         choices.put("REMOVE", "remove a player from a team");
         choices.put("HEIGHT", "print a Team Height Report for a team");
         choices.put("BALANCE", "print the League Balance Report");
-        choices.put("EXIT", "to exit the Organier role");
+        choices.put("EXIT", "exit the Organier role");
     }
 
     public void run() throws IOException{
@@ -44,8 +43,10 @@ public class Organizer {
                 removePlayerFromTeam();
             } else if (userChoice.toLowerCase().equals("height")) { // team height report
                 printTeamHeightReport();
-            } else if (userChoice.toLowerCase().equals("balance")) {
+            } else if (userChoice.toLowerCase().equals("balance")) { // league balance report
                 printLeagueBalanceReport();
+            } else if (userChoice.toLowerCase().equals("exit")) { // exit
+                return;
             } else {
                 System.out.println("That was not a menu choice.  Please try again.");
             }
@@ -171,7 +172,7 @@ public class Organizer {
     }
 
     private void promptForChoice() {
-        System.out.println("Choose an option below: ");
+        System.out.println("You are now in the ORGANIZER role.  Choose an option below: ");
         for (Map.Entry<String, String> entry : choices.entrySet()) {
             System.out.printf("Choose %s to %s %n", entry.getKey(), entry.getValue());
         }
