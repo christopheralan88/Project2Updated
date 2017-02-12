@@ -9,7 +9,7 @@ public class Team implements Comparable<Team> {
     private String teamName;
     private String coach;
     private Set<Player> players = new TreeSet<>();
-    private final int MAX_PLAYERS = 11;
+    public static final int MAX_PLAYERS = 11;
 
 
     public Team(String teamName, String coach){
@@ -50,26 +50,20 @@ public class Team implements Comparable<Team> {
         return teamName;
     }
 
-    public void addPlayer(Player player) {
-        if (players.size() >= MAX_PLAYERS) {
-            System.out.printf("This team is full.  %d players are already assigned to the team. %n", MAX_PLAYERS);
-            return;
-        }
-
+    public boolean addPlayer(Player player) {
         if (getPlayers().add(player)) {
-            // if player is added successfully (there were no duplicates in TreeSet, then add() method returns true.
-            System.out.println("Player added successfully!");
+            // if player is added successfully (there were no duplicates in TreeSet), then add() method returns true.
+            return true;
         } else {
-            System.out.println("The player has already been added to the team.");
+            return false; // the player is already on the team roster.
         }
     }
 
-    public void removePlayer(Player player) {
-        // if player is removed successfully, then remove() method returns true.
+    public boolean removePlayer(Player player) {
         if (getPlayers().remove(player)) {
-            System.out.println("Player removed successfully!");
+            return true;
         } else {
-            System.out.println("The player does not exist on the team's roster, so the player could not be removed");
+            return false;
         }
     }
 }

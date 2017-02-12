@@ -6,6 +6,7 @@ import com.teamtreehouse.model.Player;
 import com.teamtreehouse.model.Players;
 import com.teamtreehouse.roles.Organizer;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +43,7 @@ public class MainMenu {
         while (! userChoice.toLowerCase().equals("exit")) {
             if (userChoice.toLowerCase().equals("organizer")) {
                 Organizer organizer = new Organizer();
-                organizer.printOrganizerMenu();
+                organizer.run();
                 printRoles(); //after above method is exited, display MainMenu roles to user for them to choose.
                 userChoice = scanner.next();
             } else if (userChoice.toLowerCase().equals("coach")) {

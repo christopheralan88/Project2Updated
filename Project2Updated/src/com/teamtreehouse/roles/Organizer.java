@@ -12,70 +12,40 @@ import java.util.*;
 public class Organizer {
 
     private Scanner scanner;
+    private Map<String, String> choices;
 
-
-    private enum OrganizerMenu {
-        CREATE_TEAM,
-        ADD_PLAYER,
-        REMOVE_PLAYER,
-        TEAM_HEIGHT_REPORT,
-        LEAGUE_BALANCE_REPORT,
-        EXIT
-    }
 
     public Organizer() {
+        // instantiates Scanner and HashMap objects assigned to scanner and choices fields.
         scanner = new Scanner(System.in);
+        choices = new HashMap<>();
+        choices.put("CREATE", "create a new team");
+        choices.put("ADD", "add a player to a team");
+        choices.put("REMOVE", "remove a player from a team");
+        choices.put("HEIGHT", "print a Team Height Report for a team");
+        choices.put("BALANCE", "print the League Balance Report");
+        choices.put("EXIT", "to exit the program");
     }
 
-    public void printOrganizerMenu() {
-        promptForChoice();
-
-        String userChoice = scanner.next();
-        while (! userChoice.toLowerCase().equals("exit")) { // exit
-            if (userChoice.toLowerCase().equals("create_team")) { // create team
-                System.out.println("What is the name of the team?");
-                String teamName = scanner.next();
-                System.out.println("What is the coach's name?");
-                String coach = scanner.next();
-                createTeam(teamName, coach);
-                promptForChoice();
-                userChoice = scanner.next();
-            } else if (userChoice.toLowerCase().equals("add_player")) { // add player
-                printTeams();
-                System.out.println("Choose the index of the team you want to add a player to");
-                int teamIndex = scanner.nextInt();
-                printAllPlayers();
-                System.out.println("Type the index of the player you want to add");
-                int playerIndex = scanner.nextInt();
-                addPlayer(teamIndex, playerIndex);
-                promptForChoice();
-                userChoice = scanner.next();
-            } else if (userChoice.toLowerCase().equals("remove_player")) { // remove player
-                printTeams();
-                System.out.println("Choose the index of the team you want to remove a player from");
-                int teamIndex = scanner.nextInt();
-                printTeamPlayers(teamIndex);
-                System.out.println("Choose the index of a player you want to remove");
-                int playerIndex = scanner.nextInt();
-                removePlayer(teamIndex, playerIndex);
-                promptForChoice();
-                userChoice = scanner.next();
-            } else if (userChoice.toLowerCase().equals("team_height_report")) { // team height report
-                printTeams();
-                System.out.println("Choose the index of the team you want to run the report for");
-                int teamIndex = scanner.nextInt();
-                printTeamHeightReport(teamIndex);
-                promptForChoice();
-                userChoice = scanner.next();
-            } else if (userChoice.toLowerCase().equals("league_balance_report")) {
+    public void run() {
+        String userChoice;
+        do {
+            promptForChoice();
+            userChoice = scanner.next();
+            if (userChoice.toLowerCase().equals("create")) { // create team
+                createNewTeam();
+            } else if (userChoice.toLowerCase().equals("add")) { // add player
+                addPlayerToTeam();
+            } else if (userChoice.toLowerCase().equals("remove")) { // remove player
+                removePlayerFromTeam();
+            } else if (userChoice.toLowerCase().equals("height")) { // team height report
+                printTeamHeightReport();
+            } else if (userChoice.toLowerCase().equals("balance")) {
                 printLeagueBalanceReport();
-                promptForChoice();
-                userChoice = scanner.next();
             } else {
                 System.out.println("That was not a menu choice.  Please try again.");
-                userChoice = scanner.next();
             }
-        }
+        } while (! userChoice.toLowerCase().equals("exit"));
     }
 
     private void printLeagueBalanceReport() {
@@ -107,8 +77,17 @@ public class Organizer {
         }
     }
 
-    private void printTeamHeightReport(int teamIndex) {
-        // get team's players
+    private void printTeamHeightReport() {
+        printTeams();
+
+        System.out.println("Choose the index of the team you want to run the report for");
+        int teamIndex = scanner.nextInt();
+
+        if (! teamExists(teamIndex)) {
+            System.out.println("That team index does not exist.");
+            return;
+        }
+
         Set<Player> players = MainMenu.league.teams.get(teamIndex).getPlayers();
         Map<String, List<Player>> heightMap = new HashMap<>();
 
@@ -121,14 +100,8 @@ public class Organizer {
             } catch (NullPointerException npe) {
                 newList = new ArrayList<>();
             }
-
-            // add player to list.
             newList.add(player);
-
-            // sort list before adding it to map.
             Collections.sort(newList);
-
-            // put key-value pair of height and newList in map.
             heightMap.put(height, newList );
         }
 
@@ -164,7 +137,6 @@ public class Organizer {
         } catch (NullPointerException npe) {
             System.out.printf("%-16s%-16s %n%n", "none", "none");
         }
-
     }
 
     private String heightGroup(Player player) {
@@ -179,9 +151,9 @@ public class Organizer {
     }
 
     private void promptForChoice() {
-        System.out.println("Please type in one of the following: ");
-        for (OrganizerMenu item : OrganizerMenu.values()) {
-            System.out.println(item);
+        System.out.println("Choose an option below: ");
+        for (Map.Entry<String, String> entry : choices.entrySet()) {
+            System.out.printf("Choose %s to %s %n", entry.getKey(), entry.getValue());
         }
     }
 
@@ -197,7 +169,13 @@ public class Organizer {
         }
     }
 
-    private void createTeam(String teamName, String coach) {
+    private void createNewTeam() {
+        System.out.println("What is the name of the team (input as a single word)?");
+        String teamName = scanner.next();
+
+        System.out.println("What is the coach's name (ex:  Chris Jones should be input as chris.jones or chris_jones)?");
+        String coach = scanner.next();
+
         /* create new array from Players class because the players field in the MainMenu class won't have an accurate
         count of all players once players are added to teams. */
         Player[] players = Players.load();
@@ -207,15 +185,8 @@ public class Organizer {
             Team newTeam = new Team(teamName, coach);
             MainMenu.league.teams.add(newTeam);
             System.out.println("Team created successfully!");
-        }
-    }
-
-    private void addPlayer(int teamIndex, int playerIndex) {
-        try {
-            Team team = MainMenu.league.teams.get(teamIndex);
-            team.addPlayer(MainMenu.players.get(playerIndex));
-        } catch (IndexOutOfBoundsException ioobe) {
-            System.out.println("That team or player index does not exist");
+        } else {
+            System.out.printf("The maximum number of teams, %d, already exists", players.length);
         }
     }
 
@@ -229,7 +200,7 @@ public class Organizer {
         }
     }
 
-    private void printTeamPlayers(int teamIndex) {
+    private boolean printTeamPlayers(int teamIndex) {
         try {
             Player[] players = MainMenu.league.teams.get(teamIndex).getPlayers().toArray(new Player[0]);  //TODO:  simpler way to do this?
             System.out.println("Index      Last Name      First Name       Height In Inches        Prev Exp");
@@ -238,25 +209,108 @@ public class Organizer {
                         players[i].isPreviousExperience());
             }
         } catch (IndexOutOfBoundsException ioobe) {
-            System.out.println("That team index does not exist.");
+            return false;
+        }
+        return true;
+    }
+
+    private void addPlayerToTeam() {
+        if (! teamsExist()) {
+            System.out.println("No teams currently exist.  Please create a team before adding players");
+            return;
+        }
+
+        printTeams();
+
+        System.out.println("Choose the index of the team you want to add a player to");
+        int teamIndex = scanner.nextInt();
+
+        Team team;
+        try {
+            team = MainMenu.league.teams.get(teamIndex);
+        } catch(IndexOutOfBoundsException ioobe) {
+            System.out.println("That team index does not exist");
+            return;
+        }
+
+        printAllPlayers();
+
+        System.out.println("Type the index of the player you want to add to the team");
+        int playerIndex = scanner.nextInt();
+
+        Player player;
+        try {
+            player = MainMenu.players.get(playerIndex);
+        } catch (IndexOutOfBoundsException ioobe) {
+            System.out.println("That player index does not exist.");
+            return;
+        }
+
+
+        if (team.getPlayers().size() >= Team.MAX_PLAYERS) {
+            System.out.printf("This team is full.  %d players are already assigned to the team. %n", Team.MAX_PLAYERS);
+        } else {
+            if (team.addPlayer(player)) { // addPlayer() method will return true if player is added successfully
+                System.out.println("The player was added successfully!");
+            } else {
+                System.out.println("The player already exists on the team's roster");
+            }
         }
     }
 
-    private void removePlayer(int teamIndex, int playerIndex) {
+    private void removePlayerFromTeam() {
+        if (! teamsExist()) {
+            System.out.println("No teams currently exist.  Please create a team before removing players");
+            return;
+        }
+
+        printTeams();
+
+        System.out.println("Choose the index of the team you want to remove a player from");
+        int teamIndex = scanner.nextInt();
+
+        if (! teamExists(teamIndex)) {
+            System.out.println("That team index does not exist.");
+            return;
+        }
+
+        printTeamPlayers(teamIndex);
+
+        System.out.println("Choose the index of a player you want to remove"); // if this line runs, then we know the team exists
+        int playerIndex = scanner.nextInt();
+
+        // determine if user index is within array bounds
+        Team team;
+        Player player;
         try {
-            Team team = MainMenu.league.teams.get(teamIndex);
-
-            // array of team's players
+            team = MainMenu.league.teams.get(teamIndex);
             Player[] players = team.getPlayers().toArray(new Player[0]);
-
-            // get player that organizer wants to remove from team
-            Player player = players[playerIndex];
-
-            // remove player from team
-            team.removePlayer(player);
-
+            player = players[playerIndex];
         } catch (IndexOutOfBoundsException ioobe) {
             System.out.println("That player index does not exist");
+            return;
         }
+
+        if (team.removePlayer(player)) {
+            System.out.println("Player removed successfully!");
+        } else {
+            System.out.println("There was a problem removing the player.  Contact system admin for help.");
+        }
+    }
+
+    private boolean teamExists(int teamIndex) {
+        try {
+            MainMenu.league.teams.get(teamIndex);
+        } catch (IndexOutOfBoundsException ioobe) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean teamsExist() {
+        if (MainMenu.league.teams.size() == 0) {
+            return false;
+        }
+        return true;
     }
 }
